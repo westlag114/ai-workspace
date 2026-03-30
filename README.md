@@ -13,12 +13,15 @@ Claude Code を使った AI 駆動開発環境をセットアップするため�
 
 ### セットアップ手順
 
-#### 1. このリポジトリを clone する
+#### 1. このリポジトリを clone し、`.git/` を削除する
 
 ```bash
 git clone https://github.com/your-org/ai-workspace.git
 cd ai-workspace
+rm -rf .git
 ```
+
+ワークスペース自体は Git 管理しません。`.git/` を削除することで、サブディレクトリに配置するプロジェクトが PROJECT_DIR として正しく検出されるようになります。
 
 #### 2. 開発対象のプロジェクトを clone する
 
