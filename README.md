@@ -2,20 +2,77 @@
 
 Claude Code を使った AI 駆動開発環境をセットアップするためのツールキットです。
 
-## ディレクトリの概念
+## ディレクトリ構成と使い方
 
-このツールキットでは **WORKSPACE_DIR** と **PROJECT_DIR** という 2 つのディレクトリ概念を区別しています。
+このツールキットでは **WORKSPACE_DIR** と **PROJECT_DIR** を分離する構成を採用しています。
 
 | 概念 | 説明 |
 |---|---|
-| **WORKSPACE_DIR** | Claude Code を実行するカレントディレクトリ（CWD）。`.ai-agent/` や `.claude/skills/` などの設定ファイルはここに配置される |
-| **PROJECT_DIR** | 実際のソースコードが格納されている Git リポジトリのルート |
+| **WORKSPACE_DIR** | Claude Code を実行するカレントディレクトリ（CWD）。AI 設定ファイル（`.ai-agent/`、`.claude/`）を配置する場所 |
+| **PROJECT_DIR** | 実際のソースコードが格納されている Git リポジトリ。WORKSPACE_DIR のサブディレクトリとして配置する |
 
-- WORKSPACE_DIR 直下に `.git/` がある場合、PROJECT_DIR は `.`（同一ディレクトリ）になります
-- WORKSPACE_DIR 直下に `.git/` がない場合、サブディレクトリ内の Git リポジトリが PROJECT_DIR として検出されます
-- 複数の Git リポジトリが存在する場合は、セットアップ時にどれを対象とするか確認されます
+### 具体例：セットアップ手順
 
-この設計により、1 つのワークスペースから複数プロジェクトを管理したり、ソースコードと AI 設定ファイルを分離して管理することができます。
+#### 1. ワークスペースを作成する
+
+```bash
+mkdir my-workspace && cd my-workspace
+git init   # ワークスペース自体を Git 管理する
+```
+
+#### 2. 開発対象のプロジェクトをサブディレクトリに配置する
+
+```bash
+# 既存リポジトリを clone する場合
+git submodule add https://github.com/your-org/my-app.git
+
+# または既存のローカルリポジトリをサブモジュールとして追加
+git submodule add /path/to/local/my-app
+```
+
+#### 3. このツールキットのスキルをコピーする
+
+```bash
+# claude-code/skills/ を .claude/skills/ としてコピー、または
+# /autodev-init の実行時に自動でインストールされます
+```
+
+#### 4. `/autodev-init` を実行する
+
+Claude Code をワークスペースのルートで起動し、`/autodev-init` を実行します。
+`my-app/` が PROJECT_DIR として自動検出され、以下のような構成が生成されます：
+
+```
+my-workspace/                  ← WORKSPACE_DIR（CWD）
+├── .ai-agent/                 ← AI 設定（ワークスペースに配置）
+│   ├── steering/
+│   │   ├── product.md
+│   │   ├── tech.md
+│   │   ├── market.md
+│   │   └── work.md
+│   ├── structure.md
+│   ├── projects/
+│   ├── tasks/
+│   └── surveys/
+├── .claude/
+│   └── skills/                ← スキル定義（ワークスペースに配置）
+│       ├── autodev-start-new-task/
+│       ├── autodev-create-pr/
+│       └── ...
+├── CLAUDE.md
+├── README.md
+└── my-app/                    ← PROJECT_DIR（ソースコード）
+    ├── .git/
+    ├── src/
+    ├── package.json
+    └── ...
+```
+
+### なぜ分離するのか
+
+- **ソースコードを汚さない**: AI 設定ファイルはワークスペース側に置くため、プロジェクト本体のリポジトリに変更が入らない
+- **複数プロジェクトの管理**: 1 つのワークスペースに複数の PROJECT_DIR を配置して、横断的に作業できる
+- **設定の独立管理**: ワークスペースとプロジェクトを別々にバージョン管理できる
 
 ## 使い方
 
