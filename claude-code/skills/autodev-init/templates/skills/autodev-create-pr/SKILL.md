@@ -1,0 +1,49 @@
+---
+name: autodev-create-pr
+description: Create a GitHub pull request from the current branch's changes. Use when changes are ready for review and you want to open a PR.
+allowed-tools: Read, Glob, "Bash(git -C * status *)", "Bash(git -C * log *)", "Bash(git -C * diff *)", "Bash(git -C * push *)", "Bash(git -C * branch --show-current)", "Bash(cd * && gh pr view *)", mcp__github__create_pull_request, mcp__github__update_pull_request
+---
+
+# PR 作成
+
+現在のブランチの変更内容から PR を作成します。
+
+## 手順
+
+1. **現在の状態を確認**:
+
+   - `git -C {PROJECT_DIR} status` で未コミットの変更がないか確認
+   - `git -C {PROJECT_DIR} log main..HEAD --oneline` で main からのコミット一覧を確認
+   - `git -C {PROJECT_DIR} diff main...HEAD --stat` で変更ファイルを確認
+
+2. **リモートにプッシュ**:
+
+   - ブランチがリモートにない場合は `git -C {PROJECT_DIR} push -u origin <branch>` でプッシュ
+
+3. **PR テンプレートを確認**:
+
+   - `{PROJECT_DIR}/.github/PULL_REQUEST_TEMPLATE.md` があれば読み込む
+
+4. **PR を作成**:
+
+   - `mcp__github__create_pull_request` を使用
+   - タイトル: 変更内容を簡潔に要約
+   - ボディ: PR テンプレートに沿って記載
+     - 目的: 変更の背景・目的
+     - 変更概要: 主な変更点を箇条書き
+   - 注意点：改行のエスケープは不要。PR 説明の改行がエスケープされていないか確認する
+
+5. **PR の内容を確認**:
+
+   - `cd {PROJECT_DIR} && gh pr view {pull_number} --json body` で作成された PR の本文を取得
+   - 改行が `\n` のようにエスケープされたまま表示されていないか確認
+   - 問題がある場合は `mcp__github__update_pull_request` で修正する
+
+6. **PR URL を報告**:
+   - 作成した PR の URL をユーザーに伝える
+
+## 注意事項
+
+- コミットが済んでいない変更がある場合は、先にコミットするか確認する
+- main ブランチへの直接プッシュは避ける
+- PR タイトルは日本語で簡潔に（50 文字以内推奨）
