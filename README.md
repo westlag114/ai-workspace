@@ -11,36 +11,35 @@ Claude Code を使った AI 駆動開発環境をセットアップするため�
 | **WORKSPACE_DIR** | Claude Code を実行するカレントディレクトリ（CWD）。AI 設定ファイル（`.ai-agent/`、`.claude/`）を配置する場所 |
 | **PROJECT_DIR** | 実際のソースコードが格納されている Git リポジトリ。WORKSPACE_DIR のサブディレクトリとして配置する |
 
-### 具体例：セットアップ手順
+### セットアップ手順
 
-#### 1. ワークスペースを作成する
-
-```bash
-mkdir my-workspace && cd my-workspace
-git init   # ワークスペース自体を Git 管理する
-```
-
-#### 2. 開発対象のプロジェクトをサブディレクトリに配置する
+#### 1. このリポジトリを clone する
 
 ```bash
-# 既存リポジトリを clone する場合
-git submodule add https://github.com/your-org/my-app.git
-
-# または既存のローカルリポジトリをサブモジュールとして追加
-git submodule add /path/to/local/my-app
+git clone https://github.com/your-org/ai-workspace.git
+cd ai-workspace
 ```
 
-#### 3. このツールキットのスキルをコピーする
+#### 2. 開発対象のプロジェクトを clone する
+
+ワークスペース内に、開発したいプロジェクトのリポジトリを clone します。
 
 ```bash
-# claude-code/skills/ を .claude/skills/ としてコピー、または
-# /autodev-init の実行時に自動でインストールされます
+# 例: my-app を開発する場合
+git clone https://github.com/your-org/my-app.git
+
+# 複数プロジェクトを扱う場合は並べて clone
+git clone https://github.com/your-org/my-api.git
 ```
 
-#### 4. `/autodev-init` を実行する
+#### 3. Claude Code を起動して `/autodev-init` を実行する
 
-Claude Code をワークスペースのルートで起動し、`/autodev-init` を実行します。
-`my-app/` が PROJECT_DIR として自動検出され、以下のような構成が生成されます：
+ワークスペースのルート（`ai-workspace/`）で Claude Code を起動し、`/autodev-init` を実行します。
+`my-app/` が PROJECT_DIR として自動検出され、対話的にセットアップが進みます。
+
+> **注意**: `/autodev-init` で生成される `.ai-agent/`、`.claude/skills/`、`CLAUDE.md` などの AI 設定ファイルはワークスペースのローカルファイルです。プロジェクト側のリポジトリには影響しません。
+
+#### セットアップ後のディレクトリ構成
 
 ```
 my-workspace/                  ← WORKSPACE_DIR（CWD）
@@ -72,7 +71,7 @@ my-workspace/                  ← WORKSPACE_DIR（CWD）
 
 - **ソースコードを汚さない**: AI 設定ファイルはワークスペース側に置くため、プロジェクト本体のリポジトリに変更が入らない
 - **複数プロジェクトの管理**: 1 つのワークスペースに複数の PROJECT_DIR を配置して、横断的に作業できる
-- **設定の独立管理**: ワークスペースとプロジェクトを別々にバージョン管理できる
+- **Git 管理不要**: ワークスペース自体は Git 管理しないため、セットアップが簡単でプロジェクト側の履歴を汚さない
 
 ## 使い方
 
