@@ -1,7 +1,7 @@
 ---
 name: autodev-create-pr
 description: Create a GitHub pull request from the current branch's changes. Use when changes are ready for review and you want to open a PR.
-allowed-tools: Read, Glob, "Bash(git -C * status *)", "Bash(git -C * log *)", "Bash(git -C * diff *)", "Bash(git -C * push *)", "Bash(git -C * branch --show-current)", "Bash(cd * && gh pr view *)", mcp__github__create_pull_request, mcp__github__update_pull_request
+allowed-tools: Read, Glob, "Bash(git -C * status *)", "Bash(git -C * log *)", "Bash(git -C * diff *)", "Bash(git -C * push *)", "Bash(git -C * branch --show-current)", "Bash(git -C * symbolic-ref *)", "Bash(cd * && gh pr view *)", mcp__github__create_pull_request, mcp__github__update_pull_request
 ---
 
 # PR 作成
@@ -12,9 +12,10 @@ allowed-tools: Read, Glob, "Bash(git -C * status *)", "Bash(git -C * log *)", "B
 
 1. **現在の状態を確認**:
 
+   - `git -C {PROJECT_DIR} symbolic-ref refs/remotes/origin/HEAD --short` でデフォルトブランチを取得（例: `origin/main`）。以降、このブランチを `{DEFAULT_BRANCH}` として使用する
    - `git -C {PROJECT_DIR} status` で未コミットの変更がないか確認
-   - `git -C {PROJECT_DIR} log main..HEAD --oneline` で main からのコミット一覧を確認
-   - `git -C {PROJECT_DIR} diff main...HEAD --stat` で変更ファイルを確認
+   - `git -C {PROJECT_DIR} log {DEFAULT_BRANCH}..HEAD --oneline` でデフォルトブランチからのコミット一覧を確認
+   - `git -C {PROJECT_DIR} diff {DEFAULT_BRANCH}...HEAD --stat` で変更ファイルを確認
 
 2. **リモートにプッシュ**:
 
@@ -45,5 +46,5 @@ allowed-tools: Read, Glob, "Bash(git -C * status *)", "Bash(git -C * log *)", "B
 ## 注意事項
 
 - コミットが済んでいない変更がある場合は、先にコミットするか確認する
-- main ブランチへの直接プッシュは避ける
+- デフォルトブランチへの直接プッシュは避ける
 - PR タイトルは日本語で簡潔に（50 文字以内推奨）
